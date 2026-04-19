@@ -24,6 +24,7 @@ Users often spend too much time scrolling through streaming platforms without kn
 ### Users
 - _id  
 - email  
+- username
 - passwordHash  
 
 ### SavedLists
