@@ -1,24 +1,5 @@
 import mongoose from "mongoose";
-
-const movieSchema = new mongoose.Schema(
-  {
-    tmdbId: {
-      type: Number,
-      required: true,
-    },
-    title: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    posterPath: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-  },
-  { _id: false },
-);
+import movieSchema from "./Movie.js";
 
 const savedListSchema = new mongoose.Schema(
   {
