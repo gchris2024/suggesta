@@ -30,8 +30,8 @@ Users often spend too much time scrolling through streaming platforms without kn
 ### SavedLists
 - _id  
 - userId  
-- inputMovies: [{ tmdbId, title, posterPath }]  
-- recommendedMovies: [{ tmdbId, title, posterPath }]  
+- name  
+- movies: [{ tmdbId, title, posterPath }]  
 - createdAt  
 
 ---

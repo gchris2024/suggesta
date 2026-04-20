@@ -24,4 +24,4 @@ The Saved page appears when the users clicks the "My Lists" button
 
 ---
 
-Images can be found in the `/web` folder
+Images can be found in `/web/wireframes`
