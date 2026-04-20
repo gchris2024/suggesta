@@ -21,3 +21,7 @@ The Recommendations page appears when the users clicks the "Generate Recommendat
 ## Saved
 
 The Saved page appears when the users clicks the "My Lists" button
+
+---
+
+Images can be found in the `/web` folder

@@ -19,7 +19,7 @@ app.use(cors({ origin: ALLOWED_ORIGINS }));
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.json({ message: "Hello from the suggesta backend!" });
+  res.json({ message: "Hello from the backend!" });
 });
 
 app.listen(PORT, () => {
