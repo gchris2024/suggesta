@@ -7,7 +7,7 @@ import verifyToken from "./middleware/verifyToken.js";
 
 import authRoutes from "./routes/authRoutes.js";
 import moviesRoutes from "./routes/moviesRoutes.js";
-import listRoutes from "./routes/listRoutes.js";
+import savedRoutes from "./routes/savedRoutes.js";
 
 dotenv.config();
 
@@ -33,7 +33,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/movies", verifyToken, moviesRoutes);
-app.use("/api/list", verifyToken, listRoutes);
+app.use("/api/saved", verifyToken, savedRoutes);
 
 // Connect to MongoDB, then start the server
 mongoose
