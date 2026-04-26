@@ -1,3 +1,9 @@
+import AppPageLayout from "../components/app/AppPageLayout";
+
 export default function Home() {
-  return <div>Home</div>;
+  return (
+    <AppPageLayout>
+      <div>Home</div>
+    </AppPageLayout>
+  );
 }

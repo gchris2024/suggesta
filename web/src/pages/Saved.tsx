@@ -1,3 +1,9 @@
+import AppPageLayout from "../components/app/AppPageLayout";
+
 export default function Saved() {
-  return <div>Saved</div>;
+  return (
+    <AppPageLayout>
+      <div>Saved</div>
+    </AppPageLayout>
+  );
 }

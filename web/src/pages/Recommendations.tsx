@@ -1,3 +1,9 @@
+import AppPageLayout from "../components/app/AppPageLayout";
+
 export default function Recommendations() {
-  return <div>Recommendations</div>;
+  return (
+    <AppPageLayout>
+      <div>Recommendations</div>
+    </AppPageLayout>
+  );
 }
