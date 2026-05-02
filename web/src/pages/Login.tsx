@@ -81,7 +81,7 @@ export default function Login() {
         navigate("/home");
       }, 500);
     } catch {
-      setError("Could not connect to the backend.");
+      setError("Problem connecting to the server. Please try again later.");
     } finally {
       setIsSubmitting(false);
     }
@@ -168,7 +168,7 @@ export default function Login() {
         </section>
 
         <section className="hidden lg:block" aria-hidden="true">
-          <div className="h-72 w-full rounded-2xl bg-gray-300 xl:h-[30rem]" />
+          <div className="h-72 w-full rounded-2xl bg-gray-300 xl:h-120" />
         </section>
       </div>
     </main>

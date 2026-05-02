@@ -7,7 +7,7 @@ export default function Landing() {
     <main className="mx-auto w-full max-w-6xl px-6 pb-10 pt-14 md:pb-14 md:pt-16">
       <HeroSection />
 
-      <div className="mb-8 h-52 w-full rounded-2xl bg-gray-300 md:mb-12 md:h-[30rem]" aria-hidden="true" />
+      <div className="mb-8 h-52 w-full rounded-2xl bg-gray-300 md:mb-12 md:h-120" aria-hidden="true" />
 
       <FeatureSection
         title="Compelling Headline"

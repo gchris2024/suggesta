@@ -1,17 +1,7 @@
-import type { Movie } from "@/lib/types";
+import type { MoviesResponse, RecommendationsResponse } from "@/lib/types";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:3000/api";
-
-type MoviesResponse = {
-  movies?: Movie[];
-  error?: string;
-};
-
-type RecommendationsResponse = {
-  recommendations?: Movie[];
-  error?: string;
-};
 
 function getStoredToken() {
   return (

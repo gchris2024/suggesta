@@ -3,8 +3,9 @@ import express from "express";
 const router = express.Router();
 
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
-const POPULAR_MOVIES_LIMIT = 10;
-const SEARCH_MOVIES_LIMIT = 8;
+const POPULAR_MOVIES_LIMIT = 12;
+const SEARCH_MOVIES_LIMIT = 12;
+const RECOMMENDATIONS_LIMIT = 12;
 
 const tmdbHeaders = () => ({
   Authorization: `Bearer ${process.env.TMDB_READ_ACCESS_TOKEN}`,
@@ -130,7 +131,7 @@ router.post("/recommendations", async (req, res) => {
     // Sort by most highly voted
     recommendations.sort((a, b) => b.voteAverage - a.voteAverage);
 
-    res.json({ recommendations });
+    res.json({ recommendations: recommendations.slice(0, RECOMMENDATIONS_LIMIT) });
   } catch (error) {
     console.error("Error fetching recommendations:", error.message);
     res.status(500).json({ error: "Internal server error" });

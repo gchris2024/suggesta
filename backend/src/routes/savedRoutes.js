@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
       movies,
     });
 
-    res.status(201).json({ message: "List saved successfully" });
+    res.status(201).json({ message: "List saved successfully", list });
   } catch (error) {
     console.error("Error saving list:", error.message);
     res.status(500).json({ error: "Failed to save list" });
@@ -43,6 +43,51 @@ router.get("/", async (req, res) => {
   } catch (error) {
     console.error("Error fetching lists:", error.message);
     res.status(500).json({ error: "Failed to fetch lists" });
+  }
+});
+
+// PATCH /api/saved/:id — add movies to an existing saved list
+router.patch("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { movies } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: "Invalid list ID" });
+  }
+
+  if (!Array.isArray(movies) || movies.length === 0) {
+    return res
+      .status(400)
+      .json({ error: "'movies' must be a non-empty array" });
+  }
+
+  try {
+    const list = await SavedList.findOne({
+      _id: id,
+      userId: req.user.userId,
+    });
+
+    if (!list) {
+      return res.status(404).json({ error: "List not found" });
+    }
+
+    const seenMovieIds = new Set(list.movies.map((movie) => movie.tmdbId));
+
+    for (const movie of movies) {
+      if (!movie?.tmdbId || seenMovieIds.has(movie.tmdbId)) {
+        continue;
+      }
+
+      list.movies.push(movie);
+      seenMovieIds.add(movie.tmdbId);
+    }
+
+    await list.save();
+
+    res.json({ message: "List updated successfully", list });
+  } catch (error) {
+    console.error("Error updating list:", error.message);
+    res.status(500).json({ error: "Failed to update list" });
   }
 });
 

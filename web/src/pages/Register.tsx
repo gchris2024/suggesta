@@ -94,7 +94,7 @@ export default function Register() {
         navigate("/login");
       }, 900);
     } catch {
-      setError("Could not connect to the backend.");
+      setError("Problem connecting to the server. Please try again later.");
     } finally {
       setIsSubmitting(false);
     }
@@ -188,7 +188,7 @@ export default function Register() {
             </label>
 
             {error && (
-              <p className="m-0 text-sm font-medium text-red-700">{error}</p>
+              <p className="m-0 mb-3 text-sm font-medium text-red-700">{error}</p>
             )}
 
             <button
@@ -212,7 +212,7 @@ export default function Register() {
         </section>
 
         <section className="hidden lg:block" aria-hidden="true">
-          <div className="h-72 w-full rounded-2xl bg-gray-300 xl:h-[30rem]" />
+          <div className="h-72 w-full rounded-2xl bg-gray-300 xl:h-120" />
         </section>
       </div>
     </main>

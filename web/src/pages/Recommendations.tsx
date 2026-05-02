@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import AppPageLayout from "@/components/app/AppPageLayout";
 import MovieCard from "@/components/shared/MovieCard";
@@ -14,11 +14,43 @@ type RecommendationsPageState = {
 };
 
 export default function Recommendations() {
+  const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as RecommendationsPageState | null;
   const recommendations = state?.recommendations ?? [];
   const selectedMovies = state?.selectedMovies ?? [];
   const sourceQuery = state?.sourceQuery ?? "";
+  const [selectedRecommendationIds, setSelectedRecommendationIds] = useState<
+    number[]
+  >([]);
+
+  function handleToggleRecommendation(tmdbId: number) {
+    setSelectedRecommendationIds((currentIds) =>
+      currentIds.includes(tmdbId)
+        ? currentIds.filter((currentId) => currentId !== tmdbId)
+        : [...currentIds, tmdbId],
+    );
+  }
+
+  function handleSaveSelectedMovies() {
+    if (selectedRecommendationIds.length === 0) {
+      return;
+    }
+
+    const pendingMovies = selectedRecommendationIds.flatMap((tmdbId) => {
+      const selectedRecommendation = recommendations.find(
+        (movie) => movie.tmdbId === tmdbId,
+      );
+
+      return selectedRecommendation ? [selectedRecommendation] : [];
+    });
+
+    navigate("/saved", {
+      state: {
+        pendingMovies,
+      },
+    });
+  }
 
   // Scroll to top on "Generate Recommendations" click from Home
   useEffect(() => {
@@ -63,13 +95,37 @@ export default function Recommendations() {
               Based on your selection{selectedMovies.length === 1 ? "" : "s"},
               we recommend:
             </h2>
+
+            <p className="m-0 text-base leading-7 text-stone-600">
+              Select any recommendations you want to save into a new list or an
+              existing one.
+            </p>
           </div>
 
           {recommendations.length > 0 ? (
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-              {recommendations.map((movie) => (
-                <MovieCard key={movie.tmdbId} movie={movie} />
-              ))}
+            <div className="space-y-8">
+              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+                {recommendations.map((movie) => (
+                  <MovieCard
+                    key={movie.tmdbId}
+                    movie={movie}
+                    isToggleable
+                    isSelected={selectedRecommendationIds.includes(movie.tmdbId)}
+                    onToggle={handleToggleRecommendation}
+                  />
+                ))}
+              </div>
+
+              <div className="flex justify-center">
+                <button
+                  type="button"
+                  onClick={handleSaveSelectedMovies}
+                  disabled={selectedRecommendationIds.length === 0}
+                  className="inline-flex min-h-14 items-center justify-center rounded-2xl bg-stone-900 px-8 py-3 text-lg font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-45"
+                >
+                  Save Selected to My Lists
+                </button>
+              </div>
             </div>
           ) : (
             <div className="rounded-4xl border border-dashed border-stone-300 px-6 py-12 text-center text-stone-600">
