@@ -1,6 +1,19 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const AUTH_STORAGE_KEYS = ["token", "userId", "username"] as const;
+
+export type AppNavbarSearchProps = {
+  value: string;
+  onChange: (nextValue: string) => void;
+  onSubmit: () => void;
+  placeholder?: string;
+  isBusy?: boolean;
+};
+
+type AppNavbarProps = {
+  search?: AppNavbarSearchProps;
+};
 
 function SearchIcon() {
   return (
@@ -20,8 +33,11 @@ function SearchIcon() {
   );
 }
 
-export default function AppNavbar() {
+export default function AppNavbar({ search }: AppNavbarProps) {
   const navigate = useNavigate();
+  const [fallbackQuery, setFallbackQuery] = useState("");
+  const isSearchDisabled = search?.isBusy ?? false;
+  const searchValue = search?.value ?? fallbackQuery;
 
   function handleLogout() {
     for (const key of AUTH_STORAGE_KEYS) {
@@ -30,6 +46,22 @@ export default function AppNavbar() {
     }
 
     navigate("/");
+  }
+
+  function handleSearchSubmit() {
+    if (search) {
+      search.onSubmit();
+      return;
+    }
+
+    const normalizedQuery = fallbackQuery.trim();
+
+    if (!normalizedQuery) {
+      navigate("/home");
+      return;
+    }
+
+    navigate(`/home?query=${encodeURIComponent(normalizedQuery)}`);
   }
 
   return (
@@ -42,7 +74,13 @@ export default function AppNavbar() {
           Suggesta
         </Link>
 
-        <div className="flex min-w-0 flex-1 items-center gap-3">
+        <form
+          className="flex min-w-0 flex-1 items-center gap-3"
+          onSubmit={(event) => {
+            event.preventDefault();
+            handleSearchSubmit();
+          }}
+        >
           <div className="min-w-0 flex-1">
             <label htmlFor="movie-search" className="sr-only">
               Search movies
@@ -50,19 +88,30 @@ export default function AppNavbar() {
             <input
               id="movie-search"
               type="search"
-              placeholder="SEARCH..."
+              value={searchValue}
+              onChange={(event) => {
+                if (search) {
+                  search.onChange(event.target.value);
+                  return;
+                }
+
+                setFallbackQuery(event.target.value);
+              }}
+              placeholder={search?.placeholder ?? "SEARCH..."}
+              disabled={isSearchDisabled}
               className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm font-medium italic text-stone-900 outline-none ring-black transition placeholder:text-stone-400 focus:border-black focus:ring-1 sm:px-5"
             />
           </div>
 
           <button
-            type="button"
-            className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-transparent bg-transparent text-black transition hover:border-stone-200 hover:bg-white"
+            type="submit"
+            disabled={isSearchDisabled}
+            className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-transparent bg-transparent text-black transition hover:border-stone-200 hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
             aria-label="Search movies"
           >
             <SearchIcon />
           </button>
-        </div>
+        </form>
 
         <div className="flex items-center gap-3 lg:justify-end">
           <Link

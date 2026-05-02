@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Landing from "./pages/Landing";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Home from "./pages/Home";
-import Recommendations from "./pages/Recommendations";
-import Saved from "./pages/Saved";
+import Home from "@/pages/Home";
+import Landing from "@/pages/Landing";
+import Login from "@/pages/Login";
+import Recommendations from "@/pages/Recommendations";
+import Register from "@/pages/Register";
+import Saved from "@/pages/Saved";
 
 function App() {
   return (

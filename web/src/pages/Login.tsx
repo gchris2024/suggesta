@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
 type LoginResponse = {
   token: string;
@@ -144,7 +144,7 @@ export default function Login() {
             </label>
 
             {error && (
-              <p className="m-0 text-sm font-medium text-red-700">{error}</p>
+              <p className="m-0 mb-3 text-sm font-medium text-red-700">{error}</p>
             )}
 
             <button

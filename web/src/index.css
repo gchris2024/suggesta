@@ -21,3 +21,38 @@ body {
   background-color: var(--bg);
   color: #111;
 }
+
+.movie-carousel {
+  overflow: clip;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 4%,
+    black 96%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 4%,
+    black 96%,
+    transparent
+  );
+}
+
+.movie-carousel-track {
+  display: flex;
+  width: max-content;
+  animation: movie-carousel-scroll 36s linear infinite;
+  will-change: transform;
+}
+
+@keyframes movie-carousel-scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}

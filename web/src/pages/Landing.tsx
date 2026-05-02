@@ -1,6 +1,6 @@
-import HeroSection from "../components/landing/HeroSection";
-import FeatureSection from "../components/landing/FeatureSection";
-import LandingFooter from "../components/landing/LandingFooter";
+import FeatureSection from "@/components/landing/FeatureSection";
+import HeroSection from "@/components/landing/HeroSection";
+import LandingFooter from "@/components/landing/LandingFooter";
 
 export default function Landing() {
   return (

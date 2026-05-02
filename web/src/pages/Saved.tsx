@@ -1,4 +1,4 @@
-import AppPageLayout from "../components/app/AppPageLayout";
+import AppPageLayout from "@/components/app/AppPageLayout";
 
 export default function Saved() {
   return (

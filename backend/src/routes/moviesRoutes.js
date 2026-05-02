@@ -3,6 +3,8 @@ import express from "express";
 const router = express.Router();
 
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
+const POPULAR_MOVIES_LIMIT = 10;
+const SEARCH_MOVIES_LIMIT = 8;
 
 const tmdbHeaders = () => ({
   Authorization: `Bearer ${process.env.TMDB_READ_ACCESS_TOKEN}`,
@@ -44,7 +46,9 @@ router.get("/popular", async (req, res) => {
     }
 
     const data = await response.json();
-    res.json({ movies: data.results.map(formatMovie) });
+    res.json({
+      movies: data.results.slice(0, POPULAR_MOVIES_LIMIT).map(formatMovie),
+    });
   } catch (error) {
     console.error("Error fetching popular movies:", error.message);
     res.status(500).json({ error: "Internal server error" });
@@ -73,7 +77,7 @@ router.get("/search", async (req, res) => {
 
     const data = await response.json();
     res.json({
-      movies: data.results.map(formatMovie), // TODO: Paginate results
+      movies: data.results.slice(0, SEARCH_MOVIES_LIMIT).map(formatMovie),
       totalResults: data.total_results,
       page: data.page,
       totalPages: data.total_pages,
