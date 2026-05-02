@@ -91,6 +91,44 @@ router.patch("/:id", async (req, res) => {
   }
 });
 
+// PATCH /api/saved/:id/remove — remove movies from an existing saved list
+router.patch("/:id/remove", async (req, res) => {
+  const { id } = req.params;
+  const { tmdbIds } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: "Invalid list ID" });
+  }
+
+  if (!Array.isArray(tmdbIds) || tmdbIds.length === 0) {
+    return res
+      .status(400)
+      .json({ error: "'tmdbIds' must be a non-empty array" });
+  }
+
+  try {
+    const list = await SavedList.findOne({
+      _id: id,
+      userId: req.user.userId,
+    });
+
+    if (!list) {
+      return res.status(404).json({ error: "List not found" });
+    }
+
+    const idsToRemove = new Set(tmdbIds.map(Number));
+
+    list.movies = list.movies.filter((movie) => !idsToRemove.has(movie.tmdbId));
+
+    await list.save();
+
+    res.json({ message: "Movies removed successfully", list });
+  } catch (error) {
+    console.error("Error removing movies:", error.message);
+    res.status(500).json({ error: "Failed to remove movies from list" });
+  }
+});
+
 // DELETE /api/lists/:id — delete a saved list
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;

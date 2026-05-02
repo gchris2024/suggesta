@@ -7,6 +7,7 @@ import SelectedMovieCard from "@/components/recommendations/SelectedMovieCard";
 import {
   appendToSavedList,
   createSavedList,
+  removeFromSavedList,
   requestSavedLists,
 } from "@/lib/savedApi";
 import type { Movie, SavedList } from "@/lib/types";
@@ -35,6 +36,10 @@ export default function Saved() {
   const [isSaving, setIsSaving] = useState(false);
   const [newListName, setNewListName] = useState("");
   const [lists, setLists] = useState<SavedList[]>([]);
+  const [editingListId, setEditingListId] = useState<string | null>(null);
+  const [selectedRemovalMovieIds, setSelectedRemovalMovieIds] = useState<
+    number[]
+  >([]);
   const [pendingMovies, setPendingMovies] = useState<Movie[]>(
     () => state?.pendingMovies ?? [],
   );
@@ -80,6 +85,26 @@ export default function Saved() {
   async function refreshSavedLists() {
     const nextLists = await requestSavedLists();
     setLists(nextLists);
+  }
+
+  function handleStartEditingList(list: SavedList) {
+    setEditingListId(list._id);
+    setSelectedRemovalMovieIds([]);
+    setError("");
+    setSuccessMessage("");
+  }
+
+  function handleCancelEditingList() {
+    setEditingListId(null);
+    setSelectedRemovalMovieIds([]);
+  }
+
+  function handleToggleRemovalMovie(tmdbId: number) {
+    setSelectedRemovalMovieIds((currentIds) =>
+      currentIds.includes(tmdbId)
+        ? currentIds.filter((currentId) => currentId !== tmdbId)
+        : [...currentIds, tmdbId],
+    );
   }
 
   // Create a brand new list with the movies carried over from Recommendations.
@@ -139,6 +164,40 @@ export default function Saved() {
     }
   }
 
+  async function handleRemoveSelectedMovies(list: SavedList) {
+    if (selectedRemovalMovieIds.length === 0) {
+      return;
+    }
+
+    setIsSaving(true);
+    setError("");
+    setSuccessMessage("");
+
+    try {
+      await removeFromSavedList(list._id, selectedRemovalMovieIds);
+      await refreshSavedLists();
+      setEditingListId(null);
+      setSelectedRemovalMovieIds([]);
+      setSuccessMessage(
+        `Removed ${selectedRemovalMovieIds.length} movie${selectedRemovalMovieIds.length === 1 ? "" : "s"} from "${list.name}".`,
+      );
+    } catch (saveError) {
+      setError(
+        formatErrorMessage(
+          saveError,
+          "Unable to remove the selected movies right now.",
+        ),
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+  // Scroll to top on "Save Selected to My Lists" from Recommendations
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   return (
     <AppPageLayout>
       <div className="space-y-10">
@@ -168,12 +227,6 @@ export default function Saved() {
         {error && (
           <div className="rounded-3xl border border-red-200 bg-red-50 px-5 py-4 text-sm font-medium text-red-700">
             {error}
-          </div>
-        )}
-
-        {successMessage && (
-          <div className="rounded-3xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-medium text-emerald-700">
-            {successMessage}
           </div>
         )}
 
@@ -254,31 +307,104 @@ export default function Saved() {
                       </p>
                     </div>
 
-                    {pendingMovies.length > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => handleAddToExistingList(list)}
-                        disabled={isSaving}
-                        className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-900 transition hover:border-stone-900 disabled:cursor-not-allowed disabled:opacity-45"
-                      >
-                        Add Selected Here
-                      </button>
-                    )}
+                    <div className="flex flex-wrap items-center gap-3">
+                      {editingListId === list._id ? (
+                        <>
+                          <button
+                            type="button"
+                            onClick={handleCancelEditingList}
+                            disabled={isSaving}
+                            className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-900 transition hover:border-stone-900 disabled:cursor-not-allowed disabled:opacity-45"
+                          >
+                            Cancel
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSelectedMovies(list)}
+                            disabled={
+                              selectedRemovalMovieIds.length === 0 || isSaving
+                            }
+                            className="inline-flex min-h-11 items-center justify-center rounded-2xl bg-stone-900 px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-45"
+                          >
+                            Remove Selected
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          {list.movies.length > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => handleStartEditingList(list)}
+                              disabled={isSaving}
+                              className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-900 transition hover:border-stone-900 disabled:cursor-not-allowed disabled:opacity-45"
+                            >
+                              Edit List
+                            </button>
+                          )}
+
+                          {pendingMovies.length > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => handleAddToExistingList(list)}
+                              disabled={isSaving}
+                              className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-900 transition hover:border-stone-900 disabled:cursor-not-allowed disabled:opacity-45"
+                            >
+                              Add Selected Here
+                            </button>
+                          )}
+                        </>
+                      )}
+                    </div>
                   </div>
 
                   {/* Movie preview grid or per-list empty state */}
                   {list.movies.length > 0 ? (
                     <div className="space-y-4">
                       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
-                        {list.movies.slice(0, 5).map((movie) => (
+                        {(editingListId === list._id
+                          ? list.movies
+                          : list.movies.slice(0, 5)
+                        ).map((movie) => (
                           <article
                             key={`${list._id}-${movie.tmdbId}`}
                             className="space-y-3"
                           >
-                            <MoviePoster
-                              movie={movie}
-                              posterHeightClass="h-52"
-                            />
+                            {editingListId === list._id ? (
+                              <div className="relative">
+                                <MoviePoster
+                                  movie={movie}
+                                  posterHeightClass="h-52"
+                                />
+
+                                <label className="absolute bottom-4 right-4 flex cursor-pointer items-center justify-center">
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedRemovalMovieIds.includes(
+                                      movie.tmdbId,
+                                    )}
+                                    onChange={() =>
+                                      handleToggleRemovalMovie(movie.tmdbId)
+                                    }
+                                    className="peer sr-only"
+                                    aria-label={`Select ${movie.title} for removal`}
+                                  />
+
+                                  <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/80 bg-white/95 text-base font-black text-stone-900 shadow-sm transition peer-checked:bg-stone-900 peer-checked:text-white">
+                                    {selectedRemovalMovieIds.includes(
+                                      movie.tmdbId,
+                                    )
+                                      ? "✓"
+                                      : ""}
+                                  </span>
+                                </label>
+                              </div>
+                            ) : (
+                              <MoviePoster
+                                movie={movie}
+                                posterHeightClass="h-52"
+                              />
+                            )}
 
                             <h3 className="m-0 text-xl font-semibold italic tracking-tight text-stone-950">
                               {movie.title}
@@ -287,7 +413,7 @@ export default function Saved() {
                         ))}
                       </div>
 
-                      {list.movies.length > 5 && (
+                      {editingListId !== list._id && list.movies.length > 5 && (
                         <p className="m-0 text-sm font-medium text-stone-500">
                           +{list.movies.length - 5} more movie
                           {list.movies.length - 5 === 1 ? "" : "s"}
@@ -310,6 +436,14 @@ export default function Saved() {
             </div>
           )}
         </section>
+
+        {successMessage && (
+          <div className="flex justify-center">
+            <div className="w-full max-w-xl rounded-3xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-center text-sm font-medium text-emerald-700">
+              {successMessage}
+            </div>
+          </div>
+        )}
       </div>
     </AppPageLayout>
   );

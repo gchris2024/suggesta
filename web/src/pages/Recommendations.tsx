@@ -10,7 +10,6 @@ type RecommendationsPageState = {
   recommendations?: Movie[];
   selectedMovieIds?: number[];
   selectedMovies?: Movie[];
-  sourceQuery?: string;
 };
 
 export default function Recommendations() {
@@ -19,7 +18,6 @@ export default function Recommendations() {
   const state = location.state as RecommendationsPageState | null;
   const recommendations = state?.recommendations ?? [];
   const selectedMovies = state?.selectedMovies ?? [];
-  const sourceQuery = state?.sourceQuery ?? "";
   const [selectedRecommendationIds, setSelectedRecommendationIds] = useState<
     number[]
   >([]);
@@ -74,12 +72,6 @@ export default function Recommendations() {
                   <SelectedMovieCard key={movie.tmdbId} movie={movie} />
                 ))}
               </div>
-
-              {sourceQuery && (
-                <p className="m-0 text-base leading-7 text-stone-600">
-                  From your search for "{sourceQuery}".
-                </p>
-              )}
             </div>
           ) : (
             <div className="rounded-4xl border border-dashed border-stone-300 px-6 py-12 text-center text-stone-600">
@@ -95,22 +87,19 @@ export default function Recommendations() {
               Based on your selection{selectedMovies.length === 1 ? "" : "s"},
               we recommend:
             </h2>
-
-            <p className="m-0 text-base leading-7 text-stone-600">
-              Select any recommendations you want to save into a new list or an
-              existing one.
-            </p>
           </div>
 
           {recommendations.length > 0 ? (
             <div className="space-y-8">
-              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                 {recommendations.map((movie) => (
                   <MovieCard
                     key={movie.tmdbId}
                     movie={movie}
                     isToggleable
-                    isSelected={selectedRecommendationIds.includes(movie.tmdbId)}
+                    isSelected={selectedRecommendationIds.includes(
+                      movie.tmdbId,
+                    )}
                     onToggle={handleToggleRecommendation}
                   />
                 ))}

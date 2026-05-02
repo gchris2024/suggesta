@@ -177,7 +177,6 @@ export default function Home() {
           recommendations,
           selectedMovieIds,
           selectedMovies,
-          sourceQuery: requestedQuery,
         },
       });
     } catch (recommendationsError) {
@@ -247,7 +246,7 @@ export default function Home() {
             ) : searchResults.length > 0 ? (
               <div className="space-y-10">
                 {/* Search result cards with selection controls */}
-                <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                   {searchResults.map((movie) => (
                     <MovieCard
                       key={movie.tmdbId}

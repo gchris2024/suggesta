@@ -68,3 +68,21 @@ export async function appendToSavedList(listId: string, movies: Movie[]) {
 
   return data.list ?? null;
 }
+
+export async function removeFromSavedList(listId: string, tmdbIds: number[]) {
+  const response = await fetch(`${API_BASE_URL}/saved/${listId}/remove`, {
+    method: "PATCH",
+    headers: getAuthHeaders(true),
+    body: JSON.stringify({ tmdbIds }),
+  });
+
+  const data = (await response.json()) as SavedListResponse;
+
+  if (!response.ok) {
+    throw new Error(
+      data.error ?? "Unable to remove movies from the saved list right now.",
+    );
+  }
+
+  return data.list ?? null;
+}
