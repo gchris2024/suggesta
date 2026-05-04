@@ -1,7 +1,6 @@
 import type { MoviesResponse, RecommendationsResponse } from "@/lib/types";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+const API = `${import.meta.env.VITE_API_URL || "http://localhost:3000"}/api`;
 
 function getStoredToken() {
   return (
@@ -17,7 +16,7 @@ async function requestMovies(endpoint: string) {
     throw new Error("Log in to browse movies.");
   }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+  const response = await fetch(`${API}${endpoint}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -47,7 +46,7 @@ export async function requestRecommendations(tmdbIds: number[]) {
     throw new Error("Log in to browse movies.");
   }
 
-  const response = await fetch(`${API_BASE_URL}/movies/recommendations`, {
+  const response = await fetch(`${API}/movies/recommendations`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,

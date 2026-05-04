@@ -12,7 +12,7 @@ import savedRoutes from "./routes/savedRoutes.js";
 dotenv.config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 const ALLOWED_ORIGINS = [
   "http://localhost:5173",
@@ -35,13 +35,17 @@ app.use("/api/auth", authRoutes);
 app.use("/api/movies", verifyToken, moviesRoutes);
 app.use("/api/saved", verifyToken, savedRoutes);
 
+if (!process.env.MONGODB_URI) {
+  throw new Error("MONGODB_URI is not defined");
+}
+
 // Connect to MongoDB, then start the server
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("Connected to MongoDB");
     app.listen(PORT, () => {
-      console.log(`Server running at http://localhost:${PORT}`);
+      console.log(`Server running on port ${PORT}`);
     });
   })
   .catch((error) => {

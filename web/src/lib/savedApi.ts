@@ -1,7 +1,6 @@
 import type { Movie, SavedListResponse, SavedListsResponse } from "@/lib/types";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+const API = `${import.meta.env.VITE_API_URL || "http://localhost:3000"}/api`;
 
 function getStoredToken() {
   return (
@@ -24,7 +23,7 @@ function getAuthHeaders(contentType = false) {
 }
 
 export async function requestSavedLists() {
-  const response = await fetch(`${API_BASE_URL}/saved`, {
+  const response = await fetch(`${API}/saved`, {
     headers: getAuthHeaders(),
   });
 
@@ -38,7 +37,7 @@ export async function requestSavedLists() {
 }
 
 export async function createSavedList(name: string, movies: Movie[]) {
-  const response = await fetch(`${API_BASE_URL}/saved`, {
+  const response = await fetch(`${API}/saved`, {
     method: "POST",
     headers: getAuthHeaders(true),
     body: JSON.stringify({ name, movies }),
@@ -54,7 +53,7 @@ export async function createSavedList(name: string, movies: Movie[]) {
 }
 
 export async function appendToSavedList(listId: string, movies: Movie[]) {
-  const response = await fetch(`${API_BASE_URL}/saved/${listId}`, {
+  const response = await fetch(`${API}/saved/${listId}`, {
     method: "PATCH",
     headers: getAuthHeaders(true),
     body: JSON.stringify({ movies }),
@@ -70,7 +69,7 @@ export async function appendToSavedList(listId: string, movies: Movie[]) {
 }
 
 export async function removeFromSavedList(listId: string, tmdbIds: number[]) {
-  const response = await fetch(`${API_BASE_URL}/saved/${listId}/remove`, {
+  const response = await fetch(`${API}/saved/${listId}/remove`, {
     method: "PATCH",
     headers: getAuthHeaders(true),
     body: JSON.stringify({ tmdbIds }),
