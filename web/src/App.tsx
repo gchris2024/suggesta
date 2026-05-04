@@ -8,7 +8,7 @@ import Saved from "@/pages/Saved";
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/suggesta">
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
