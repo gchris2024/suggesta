@@ -1,16 +1,55 @@
 import FeatureSection from "@/components/landing/FeatureSection";
 import HeroSection from "@/components/landing/HeroSection";
 import LandingFooter from "@/components/landing/LandingFooter";
+import PopularMoviesCarousel from "@/components/home/PopularMoviesCarousel";
+import { requestPopularMovies } from "@/lib/movieApi";
+import type { Movie } from "@/lib/types";
+import { useEffect, useState } from "react";
 
 export default function Landing() {
+  const [isLoadingPopular, setIsLoadingPopular] = useState(true);
+  const [popularMovies, setPopularMovies] = useState<Movie[]>([]);
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    async function loadPopularMovies() {
+      setIsLoadingPopular(true);
+
+      try {
+        const movies = await requestPopularMovies();
+
+        if (!isCancelled) {
+          setPopularMovies(movies);
+        }
+      } catch {
+        if (!isCancelled) {
+          setPopularMovies([]);
+        }
+      } finally {
+        if (!isCancelled) {
+          setIsLoadingPopular(false);
+        }
+      }
+    }
+
+    void loadPopularMovies();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
+
   return (
     <main className="mx-auto w-full max-w-6xl px-6 pb-10 pt-14 md:pb-14 md:pt-16">
       <HeroSection />
 
-      <div
-        className="mb-8 h-52 w-full rounded-2xl bg-gray-300 md:mb-12 md:h-120"
-        aria-hidden="true"
-      />
+      <div className="mb-8 md:mb-12">
+        <PopularMoviesCarousel
+          movies={popularMovies}
+          isLoading={isLoadingPopular}
+        />
+      </div>
 
       <FeatureSection
         title="Get Smarter Movie Recommendations in Seconds"

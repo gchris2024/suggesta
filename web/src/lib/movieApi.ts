@@ -32,7 +32,18 @@ async function requestMovies(endpoint: string) {
 }
 
 export async function requestPopularMovies() {
-  return requestMovies("/movies/popular");
+  try {
+    const response = await fetch(`${API}/movies/popular`);
+    const data = (await response.json()) as MoviesResponse;
+
+    if (!response.ok) {
+      throw new Error(data.error ?? "Unable to load movies right now.");
+    }
+
+    return data.movies ?? [];
+  } catch {
+    throw new Error("Unable to load popular movies right now.");
+  }
 }
 
 export async function requestSearchMovies(query: string) {

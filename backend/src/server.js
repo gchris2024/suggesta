@@ -32,7 +32,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
-app.use("/api/movies", verifyToken, moviesRoutes);
+app.use("/api/movies", moviesRoutes);
 app.use("/api/saved", verifyToken, savedRoutes);
 
 if (!process.env.MONGODB_URI) {

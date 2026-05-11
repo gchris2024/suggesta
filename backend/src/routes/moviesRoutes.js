@@ -1,4 +1,5 @@
 import express from "express";
+import verifyToken from "../middleware/verifyToken.js";
 
 const router = express.Router();
 
@@ -57,7 +58,7 @@ router.get("/popular", async (req, res) => {
 });
 
 // GET /api/movies/search?q=
-router.get("/search", async (req, res) => {
+router.get("/search", verifyToken, async (req, res) => {
   const { q } = req.query;
 
   if (!q || !q.trim()) {
@@ -91,7 +92,7 @@ router.get("/search", async (req, res) => {
 
 // POST /api/movies/recommendations
 // Body: { tmdbIds: [123, 456, ...] }  (Movie IDs the user selected)
-router.post("/recommendations", async (req, res) => {
+router.post("/recommendations", verifyToken, async (req, res) => {
   const { tmdbIds } = req.body;
 
   if (!Array.isArray(tmdbIds) || tmdbIds.length === 0) {
