@@ -5,6 +5,8 @@ type FeatureSectionProps = {
   description: string;
   buttonLabel: string;
   buttonTo: string;
+  imageSrc: string;
+  imageAlt: string;
   desktopLayout: "text-left" | "text-right";
 };
 
@@ -13,6 +15,8 @@ export default function FeatureSection({
   description,
   buttonLabel,
   buttonTo,
+  imageSrc,
+  imageAlt,
   desktopLayout,
 }: FeatureSectionProps) {
   const textOrder =
@@ -36,7 +40,26 @@ export default function FeatureSection({
           {buttonLabel}
         </Link>
       </div>
-      <div className={`${imageOrder} order-1 h-52 w-full rounded-2xl bg-gray-300 md:h-72`} aria-hidden="true" />
+      <figure className={`${imageOrder} order-1 m-0 flex flex-col gap-1`}>
+        <div className="h-52 w-full overflow-hidden rounded-2xl md:h-72">
+          <img
+            src={imageSrc}
+            alt={imageAlt}
+            className="h-full w-full object-cover"
+            loading="lazy"
+          />
+        </div>
+        <figcaption className="text-right text-xs text-neutral-400">
+          <a
+            href="https://www.freepik.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:underline"
+          >
+            Designed by Freepik
+          </a>
+        </figcaption>
+      </figure>
     </section>
   );
 }

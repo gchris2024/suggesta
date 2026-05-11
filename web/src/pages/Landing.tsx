@@ -56,6 +56,8 @@ export default function Landing() {
         description="Search for movies you already love, then let Suggesta help you discover what to watch next. Build a personal taste profile and surface picks that actually match your vibe, from crowd-pleasers to hidden gems."
         buttonLabel="Create your free account"
         buttonTo="/register"
+        imageSrc={`${import.meta.env.BASE_URL}landing-1.jpg`}
+        imageAlt="Movie recommendation dashboard preview"
         desktopLayout="text-left"
       />
 
@@ -64,6 +66,8 @@ export default function Landing() {
         description="Keep track of interesting titles in one place so you do not lose great recommendations between sessions. Sign in to revisit your saved movies, refine your list, and come back whenever you need a reliable watchlist."
         buttonLabel="Sign in to your list"
         buttonTo="/login"
+        imageSrc={`${import.meta.env.BASE_URL}landing-2.jpg`}
+        imageAlt="Saved movie picks and watchlist preview"
         desktopLayout="text-right"
       />
 
